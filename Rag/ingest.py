@@ -76,18 +76,30 @@ def ingest():
     print(f"\nTotal chunks across all categories: {len(chunks)}")
 
     # Step 2: Initialize embeddings
-    print("\n[2/3] Initializing HuggingFace embeddings (all-MiniLM-L6-v2)...")
+    print("\n[2/3] Initializing Google Generative AI embeddings...")
     embeddings = get_embedding_function()
 
     # Step 3: Store in ChromaDB
     print(f"\n[3/3] Storing in ChromaDB at: {CHROMA_PERSIST_DIR}")
 
-    vectorstore = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory=CHROMA_PERSIST_DIR,
-        collection_name=COLLECTION_NAME,
-    )
+    # To avoid 429 Resource Exhausted on Google's Free Tier, batch and sleep
+    batch_size = 5
+    vectorstore = None
+    import time
+    
+    for i in range(0, len(chunks), batch_size):
+        batch = chunks[i:i+batch_size]
+        print(f"  Embedding batch {i // batch_size + 1} / {(len(chunks) - 1) // batch_size + 1} ({len(batch)} chunks)...")
+        if vectorstore is None:
+            vectorstore = Chroma.from_documents(
+                documents=batch,
+                embedding=embeddings,
+                persist_directory=CHROMA_PERSIST_DIR,
+                collection_name=COLLECTION_NAME,
+            )
+        else:
+            vectorstore.add_documents(batch)
+        time.sleep(3)  # Sleep for 3 seconds between batches to respect rate limits
 
     # Verify
     count = vectorstore._collection.count()
