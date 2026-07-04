@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Frontend build outputs
+frontend/dist/
+frontend/node_modules/
+
+# Python cache & virtual environment
+Rag/__pycache__/
+Rag/venv/
+Rag/env/
+Rag/.venv/
+
+# Local Vector Database (built on deploy)
+Rag/chroma_db/
+
+# Environments and API secrets
+.env
+server/.env
+Rag/.env
+frontend/.env
+
+# OS files
+.DS_Store
+Thumbs.db
