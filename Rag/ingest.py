@@ -80,6 +80,24 @@ def ingest():
     print("MULTI-AGENT RAG — DOCUMENT INGESTION")
     print("=" * 60)
 
+    # Check if database already exists and is populated to skip ingestion
+    if os.path.exists(CHROMA_PERSIST_DIR):
+        print(f"ChromaDB directory found at {CHROMA_PERSIST_DIR}.")
+        try:
+            embeddings = get_embedding_function()
+            vectorstore = Chroma(
+                persist_directory=CHROMA_PERSIST_DIR,
+                embedding_function=embeddings,
+                collection_name=COLLECTION_NAME,
+            )
+            count = vectorstore._collection.count()
+            if count > 0:
+                print(f"Database already contains {count} vectors. Skipping ingestion.")
+                print("=" * 60)
+                return
+        except Exception as e:
+            print(f"Error checking existing database: {e}. Proceeding with re-ingestion...")
+
     # Step 1: Load and chunk
     print("\n[1/3] Loading and chunking PDFs...")
     chunks = load_and_chunk_pdfs()
