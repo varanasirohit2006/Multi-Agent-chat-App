@@ -13,7 +13,8 @@ Nodes:
 import os
 import json
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_chroma import Chroma
 from state import AgentState
 
@@ -60,7 +61,7 @@ def _clean_llm_content(content) -> str:
     return str(content).strip()
 
 
-_EMBEDDINGS = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
+_EMBEDDINGS = FastEmbedEmbeddings()
 
 _VECTORSTORE = Chroma(
     persist_directory=CHROMA_PERSIST_DIR,

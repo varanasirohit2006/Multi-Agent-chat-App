@@ -8,3 +8,5 @@ pypdf
 reportlab
 python-dotenv
 pydantic
+fastembed
+

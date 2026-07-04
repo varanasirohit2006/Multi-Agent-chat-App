@@ -3,7 +3,7 @@
 import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_chroma import Chroma
 
 
@@ -20,8 +20,8 @@ COLLECTION_NAME = "rag_knowledge_base"
 
 
 def get_embedding_function():
-    """Returns Google Generative AI embedding model (gemini-embedding-2)."""
-    return GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
+    """Returns FastEmbed local embedding model (bge-small-en-v1.5)."""
+    return FastEmbedEmbeddings()
 
 
 def load_and_chunk_pdfs():
@@ -94,20 +94,18 @@ def ingest():
     print(f"\nTotal chunks across all categories: {len(chunks)}")
 
     # Step 2: Initialize embeddings
-    print("\n[2/3] Initializing Google Generative AI embeddings...")
+    print("\n[2/3] Initializing FastEmbed local embeddings...")
     embeddings = get_embedding_function()
 
     # Step 3: Store in ChromaDB
-    print(f"\n[3/3] Storing in ChromaDB at: {CHROMA_PERSIST_DIR}")
-
-    # To avoid 429 Resource Exhausted on Google's Free Tier, batch and sleep
-    batch_size = 5
+    print(f"\n[3/3] Storing in ChromaDB at: {CHROMA_PERSIST_DIR}...")
+    
+    batch_size = 200
     vectorstore = None
-    import time
     
     for i in range(0, len(chunks), batch_size):
         batch = chunks[i:i+batch_size]
-        print(f"  Embedding batch {i // batch_size + 1} / {(len(chunks) - 1) // batch_size + 1} ({len(batch)} chunks)...")
+        print(f"  Embedding and saving chunks {i} to {min(i + batch_size, len(chunks))} / {len(chunks)}...")
         if vectorstore is None:
             vectorstore = Chroma.from_documents(
                 documents=batch,
@@ -117,7 +115,6 @@ def ingest():
             )
         else:
             vectorstore.add_documents(batch)
-        time.sleep(3)  # Sleep for 3 seconds between batches to respect rate limits
 
     # Verify
     count = vectorstore._collection.count()

@@ -13,9 +13,6 @@ Rag/venv/
 Rag/env/
 Rag/.venv/
 
-# Local Vector Database (built on deploy)
-Rag/chroma_db/
-
 # Environments and API secrets
 .env
 server/.env
