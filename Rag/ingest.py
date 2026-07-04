@@ -3,7 +3,7 @@
 import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_chroma import Chroma
 
 
@@ -20,8 +20,11 @@ COLLECTION_NAME = "rag_knowledge_base"
 
 
 def get_embedding_function():
-    """Returns Google Generative AI embedding model (gemini-embedding-001)."""
-    return GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+    """Returns HuggingFace Inference API embedding model (all-MiniLM-L6-v2)."""
+    return HuggingFaceInferenceAPIEmbeddings(
+        api_key=os.getenv("HUGGINGFACE_API_KEY"),
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
 
 
 def load_and_chunk_pdfs():

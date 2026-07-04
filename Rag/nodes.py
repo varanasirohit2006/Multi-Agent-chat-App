@@ -13,7 +13,8 @@ Nodes:
 import os
 import json
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_chroma import Chroma
 from state import AgentState
 
@@ -61,7 +62,10 @@ def _clean_llm_content(content) -> str:
 
 
 # Global database resources (instantiated once to prevent SQLite lock contention)
-_EMBEDDINGS = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+_EMBEDDINGS = HuggingFaceInferenceAPIEmbeddings(
+    api_key=os.getenv("HUGGINGFACE_API_KEY"),
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
 _VECTORSTORE = Chroma(
     persist_directory=CHROMA_PERSIST_DIR,
