@@ -13,8 +13,7 @@ Nodes:
 import os
 import json
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 from state import AgentState
 
@@ -62,11 +61,7 @@ def _clean_llm_content(content) -> str:
 
 
 # Global database resources (instantiated once to prevent SQLite lock contention)
-_EMBEDDINGS = HuggingFaceEmbeddings(
-    model_name="all-MiniLM-L6-v2",
-    model_kwargs={"device": "cpu", "local_files_only": True},
-    encode_kwargs={"normalize_embeddings": True},
-)
+_EMBEDDINGS = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
 
 _VECTORSTORE = Chroma(
     persist_directory=CHROMA_PERSIST_DIR,
