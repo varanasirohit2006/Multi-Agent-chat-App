@@ -20,8 +20,8 @@ COLLECTION_NAME = "rag_knowledge_base"
 
 
 def get_embedding_function():
-    """Returns Google Generative AI embedding model (text-embedding-004)."""
-    return GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    """Returns Google Generative AI embedding model (gemini-embedding-001)."""
+    return GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
 
 def load_and_chunk_pdfs():

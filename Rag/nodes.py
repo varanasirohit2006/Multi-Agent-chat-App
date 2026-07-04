@@ -61,7 +61,7 @@ def _clean_llm_content(content) -> str:
 
 
 # Global database resources (instantiated once to prevent SQLite lock contention)
-_EMBEDDINGS = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+_EMBEDDINGS = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
 _VECTORSTORE = Chroma(
     persist_directory=CHROMA_PERSIST_DIR,
