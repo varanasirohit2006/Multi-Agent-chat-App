@@ -9,3 +9,4 @@ pypdf
 reportlab
 python-dotenv
 pydantic
+sentence-transformers
