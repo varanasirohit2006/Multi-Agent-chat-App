@@ -3,7 +3,7 @@
 import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 
 
@@ -20,18 +20,8 @@ COLLECTION_NAME = "rag_knowledge_base"
 
 
 def get_embedding_function():
-    """Returns HuggingFace Inference API embedding model (all-MiniLM-L6-v2)."""
-    api_key = os.getenv("HUGGINGFACE_API_KEY")
-    if not api_key:
-        print("\n[WARNING] HUGGINGFACE_API_KEY is not set in environment variables.")
-        print("Please add it to your .env file (local) or Render settings (production).")
-        # Fallback to dummy token to prevent constructor crash, but warn user
-        api_key = "hf_placeholder_token_missing"
-        
-    return HuggingFaceInferenceAPIEmbeddings(
-        api_key=api_key,
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
+    """Returns Google Generative AI embedding model (gemini-embedding-2)."""
+    return GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
 
 
 def load_and_chunk_pdfs():
