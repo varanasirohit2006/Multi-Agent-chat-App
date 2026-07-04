@@ -55,6 +55,11 @@ class QueryResponse(BaseModel):
     agent_outputs: Dict[str, str]
     final_response: str
 
+@app.get("/")
+def root():
+    """Root endpoint for Render health checks."""
+    return {"status": "ok", "service": "rag-api"}
+
 @app.get("/health")
 def health_check():
     """Simple health check endpoint."""
@@ -89,6 +94,8 @@ async def query_rag(request: QueryRequest):
         )
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=500,
             detail=f"Error executing RAG workflow: {str(e)}"
