@@ -21,8 +21,15 @@ COLLECTION_NAME = "rag_knowledge_base"
 
 def get_embedding_function():
     """Returns HuggingFace Inference API embedding model (all-MiniLM-L6-v2)."""
+    api_key = os.getenv("HUGGINGFACE_API_KEY")
+    if not api_key:
+        print("\n[WARNING] HUGGINGFACE_API_KEY is not set in environment variables.")
+        print("Please add it to your .env file (local) or Render settings (production).")
+        # Fallback to dummy token to prevent constructor crash, but warn user
+        api_key = "hf_placeholder_token_missing"
+        
     return HuggingFaceInferenceAPIEmbeddings(
-        api_key=os.getenv("HUGGINGFACE_API_KEY"),
+        api_key=api_key,
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 

@@ -62,8 +62,13 @@ def _clean_llm_content(content) -> str:
 
 
 # Global database resources (instantiated once to prevent SQLite lock contention)
+_hf_key = os.getenv("HUGGINGFACE_API_KEY")
+if not _hf_key:
+    # Use a placeholder to prevent Pydantic ValidationError on start
+    _hf_key = "hf_placeholder_token_missing"
+
 _EMBEDDINGS = HuggingFaceInferenceAPIEmbeddings(
-    api_key=os.getenv("HUGGINGFACE_API_KEY"),
+    api_key=_hf_key,
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
