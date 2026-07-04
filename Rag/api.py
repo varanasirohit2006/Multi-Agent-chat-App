@@ -14,6 +14,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
+import threading
+from ingest import ingest
+
 # Enable CORS for frontend and other services
 app.add_middleware(
     CORSMiddleware,
@@ -22,6 +25,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def start_ingestion_thread():
+    """Runs ingest() in a background thread to prevent blocking port binding."""
+    print("Starting background document ingestion thread...")
+    thread = threading.Thread(target=ingest)
+    thread.daemon = True
+    thread.start()
 
 # Lazy-load the heavy LangGraph workflow to avoid blocking server startup
 _workflow_app = None
